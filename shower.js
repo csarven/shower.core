@@ -862,13 +862,33 @@ window.shower = (function(window, document, undefined) {
 	}
 
 	// Event handlers
-	window.addEventListener('DOMContentLoaded', function() {
+    shower.initRun = function() {
 		shower.
 			init().
 			run();
-	}, false);
 
-	window.addEventListener('popstate', function() {
+        shower.addEvents();
+    }
+
+    shower.addEvents = function() {
+        window.addEventListener('popstate', shower.eventPopState, false);
+        window.addEventListener('resize', shower.eventResize, false);
+        document.addEventListener('keydown', shower.eventKeyDown, false);
+        document.addEventListener('click', shower.eventClick, false);
+        document.addEventListener('touchstart', shower.eventTouchStart, false);
+        document.addEventListener('touchmove', shower.eventTouchMove, false);
+    }
+
+    shower.removeEvents = function() {
+        window.removeEventListener('popstate', shower.eventPopState, false);
+        window.removeEventListener('resize', shower.eventResize, false);
+        document.removeEventListener('keydown', shower.eventKeyDown, false);
+        document.removeEventListener('click', shower.eventClick, false);
+        document.removeEventListener('touchstart', shower.eventTouchStart, false);
+        document.removeEventListener('touchmove', shower.eventTouchMove, false);
+    }
+
+	shower.eventPopState = function() {
 		var currentSlideNumber = shower.getCurrentSlideNumber(),
 			isSlideMode = document.body.classList.contains('full') || shower.isSlideMode();
 
@@ -894,15 +914,15 @@ window.shower = (function(window, document, undefined) {
 		} else {
 			shower.enterSlideMode();
 		}
-	}, false);
+	}
 
-	window.addEventListener('resize', function() {
+	shower.eventResize = function() {
 		if (shower.isSlideMode()) {
 			shower._applyTransform(shower._getTransform());
 		}
-	}, false);
+	}
 
-	document.addEventListener('keydown', function(e) {
+	shower.eventKeyDown = function(e) {
 		var currentSlideNumber = shower.getCurrentSlideNumber(),
 			slide = shower.slideList[ currentSlideNumber !== -1 ? currentSlideNumber : 0 ],
 			slideNumber;
@@ -995,9 +1015,9 @@ window.shower = (function(window, document, undefined) {
 			default:
 				// Behave as usual
 		}
-	}, false);
+	}
 
-	document.addEventListener('click', function(e) {
+	shower.eventClick = function(e) {
 		var slideId = shower._getSlideIdByEl(e.target),
 			slideNumber,
 			slide;
@@ -1016,9 +1036,9 @@ window.shower = (function(window, document, undefined) {
 				slide.initTimer(shower);
 			}
 		}
-	}, false);
+	}
 
-	document.addEventListener('touchstart', function(e) {
+	shower.eventTouchStart = function(e) {
 		var slideId = shower._getSlideIdByEl(e.target),
 			slideNumber,
 			slide,
@@ -1050,13 +1070,13 @@ window.shower = (function(window, document, undefined) {
 			}
 		}
 
-	}, false);
+	}
 
-	document.addEventListener('touchmove', function(e) {
+	shower.eventTouchMove = function(e) {
 		if (shower.isSlideMode()) {
 			e.preventDefault();
 		}
-	}, false);
+	}
 
 	return shower;
 
